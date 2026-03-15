@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lil Snugs — CE-1 Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & BASE ─────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --rose:    #c0394b;
+  --rose-lt: #e8728a;
+  --cream:   #fff5f7;
+  --blush:   #fde8ee;
+  --maroon:  #5a1829;
+  --maroon2: #7a2438;
+  --gold:    #e8a940;
+  --gold-lt: #f5d080;
+  --white:   #ffffff;
+  --ink:     #1a0a0e;
+  --muted:   #8a6070;
+}
+body{
+  background:#0a0406;
+  display:flex;justify-content:center;align-items:center;
+  min-height:100vh;font-family:'DM Sans',sans-serif;overflow:hidden;
+  cursor:default;
+}
+
+/* ─── STAGE ─────────────────────────────────────────────── */
+#wrap{
+  width:1280px;height:720px;
+  position:relative;transform-origin:center;
+  overflow:hidden;border-radius:12px;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.06),
+             0 40px 120px rgba(0,0,0,0.9),
+             0 0 80px rgba(192,57,75,0.15);
+}
+
+/* ─── SLIDES ────────────────────────────────────────────── */
+.slide{position:absolute;inset:0;display:none;width:100%;height:100%}
+.slide.active{display:block}
+
+/* ─── ANIMATION SYSTEM ──────────────────────────────────── */
+.fr{opacity:0;transition:opacity .28s cubic-bezier(.4,0,.2,1),
+                         transform .28s cubic-bezier(.4,0,.2,1)}
+.fr.show{opacity:1;transform:none!important}
+.fly-up  {transform:translateY(30px)}
+.fly-down{transform:translateY(-30px)}
+.fly-left{transform:translateX(30px)}
+.fly-right{transform:translateX(-30px)}
+.scale-in{transform:scale(.94)}
+.fr.show.scale-in{transform:scale(1)}
+
+/* ─── UI CHROME ─────────────────────────────────────────── */
+#hint{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,0.28);font-family:'DM Sans',sans-serif;
+  font-size:12px;pointer-events:none;z-index:999;
+  letter-spacing:1.5px;text-transform:uppercase;transition:opacity 1s;
+}
+#slide-counter{
+  position:fixed;bottom:20px;right:26px;
+  color:rgba(255,255,255,0.22);font-family:'DM Sans',sans-serif;
+  font-size:12px;z-index:999;pointer-events:none;letter-spacing:2px;
+}
+#progress{
+  position:fixed;bottom:0;left:0;height:3px;
+  background:linear-gradient(90deg,var(--rose),var(--gold));
+  transition:width .4s cubic-bezier(.4,0,.2,1);z-index:999;
+}
+
+/* ─── SHARED COMPONENTS ─────────────────────────────────── */
+.glass-card{
+  background:rgba(255,245,247,0.95);
+  border-radius:24px;
+  box-shadow:0 8px 48px rgba(90,24,41,0.14),
+             0 1px 0 rgba(255,255,255,0.8) inset;
+  border:1px solid rgba(255,255,255,0.7);
+}
+.dark-card{
+  background:linear-gradient(145deg,rgba(26,10,14,.95),rgba(40,14,22,.9));
+  border-radius:24px;
+  border:1px solid rgba(192,57,75,0.3);
+  box-shadow:0 8px 48px rgba(0,0,0,0.5);
+}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 16px;border-radius:50px;
+  font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+}
+.pill-rose{background:rgba(192,57,75,.12);color:var(--rose);border:1px solid rgba(192,57,75,.25)}
+.pill-gold{background:rgba(232,169,64,.12);color:var(--gold);border:1px solid rgba(232,169,64,.3)}
+
+/* ─── SLIDE BG NOISE LAYER ──────────────────────────────── */
+.noise-bg::after{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;border-radius:inherit;
+}
+
+/* ─── VIDEO ─────────────────────────────────────────────── */
+#video-container{
+  position:absolute;width:540px;height:330px;
+  border-radius:20px;overflow:hidden;cursor:pointer;z-index:2;
+  background:#0a0406;
+  box-shadow:0 12px 60px rgba(0,0,0,0.6),0 0 0 2px rgba(192,57,75,0.3);
+}
+#product-video{width:100%;height:100%;object-fit:cover;display:block}
+#play-overlay{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center,rgba(90,24,41,.6),rgba(10,4,6,.75));
+  transition:opacity .25s;border-radius:20px;
+}
+#play-overlay.hidden{opacity:0;pointer-events:none}
+#play-btn-ring{
+  width:80px;height:80px;border-radius:50%;
+  border:2px solid rgba(232,169,64,0.6);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;animation:ring-pulse 2s infinite;
+}
+#play-btn-inner{
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,var(--rose),var(--maroon));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(192,57,75,0.5);
+}
+
+/* ─── KEYFRAMES ─────────────────────────────────────────── */
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes ring-pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,169,64,.4)}60%{box-shadow:0 0 0 14px rgba(232,169,64,0)}}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+@keyframes float-badge{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(-2deg)}}
+@keyframes glow-line{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes counter-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes journey-glow{0%,100%{box-shadow:0 4px 20px rgba(0,0,0,0.2)}50%{box-shadow:0 8px 32px rgba(0,0,0,0.35)}}
+</style>
+</head>
+<body>
+<div id="hint">Click · Space · → Advance &nbsp;/&nbsp; ← Back</div>
+<div id="slide-counter">01 / 05</div>
+<div id="progress" style="width:20%"></div>
+<div id="wrap">
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 1 — COVER  (sleek split layout)
+═══════════════════════════════════════════════════════════════ -->
+<div class="slide active noise-bg" id="s1" style="
+  background:linear-gradient(135deg,#fff0f4 0%,#fde8ee 50%,#f9d5e2 100%);
+  display:flex;overflow:hidden;position:relative">
+
+  <!-- left maroon stripe accent -->
+  <div style="position:absolute;left:0;top:0;bottom:0;width:6px;
+    background:linear-gradient(180deg,var(--rose),var(--gold),var(--rose));z-index:5"></div>
+
+  <!-- floating decorative blobs -->
+  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0" viewBox="0 0 1280 720">
+    <defs>
+      <radialGradient id="blob1" cx="50%" cy="50%"><stop offset="0%" stop-color="#c0394b" stop-opacity=".08"/><stop offset="100%" stop-color="#c0394b" stop-opacity="0"/></radialGradient>
+      <radialGradient id="blob2" cx="50%" cy="50%"><stop offset="0%" stop-color="#e8a940" stop-opacity=".07"/><stop offset="100%" stop-color="#e8a940" stop-opacity="0"/></radialGradient>
+    </defs>
+    <circle cx="1150" cy="120" r="260" fill="url(#blob1)"/>
+    <circle cx="180"  cy="620" r="200" fill="url(#blob2)"/>
+    <circle cx="950"  cy="600" r="180" fill="url(#blob1)"/>
+    <!-- subtle grid lines -->
+    <line x1="640" y1="0" x2="640" y2="720" stroke="rgba(90,24,41,.04)" stroke-width="1"/>
+    <line x1="0" y1="360" x2="1280" y2="360" stroke="rgba(90,24,41,.04)" stroke-width="1"/>
+  </svg>
+
+  <!-- ── LEFT: Logo + brand ── -->
+  <div style="width:50%;height:100%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:50px 44px;
+    position:relative;z-index:1">
+
+    <!-- Logo image + tagline (Logo.png replaces the teddy) -->
+    <div class="fr scale-in" style="margin-bottom:28px;text-align:center;animation:bob 3.5s ease-in-out infinite">
+      <img src="Logo.jpeg" alt="Lil Snugs Logo"
+        style="width:200px;height:200px;object-fit:contain;
+          filter:drop-shadow(0 12px 32px rgba(90,24,41,0.22));
+          border-radius:20px"/>
+    </div>
+
+    <div class="fr fly-up">
+      <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:10px">
+        <div style="height:1px;width:40px;background:linear-gradient(90deg,transparent,var(--rose))"></div>
+        <span class="pill pill-rose">Est. 2024</span>
+        <div style="height:1px;width:40px;background:linear-gradient(90deg,var(--rose),transparent)"></div>
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:62px;font-weight:900;
+        color:var(--maroon);line-height:1.0;text-align:center;letter-spacing:-2px;
+        text-shadow:0 2px 20px rgba(90,24,41,0.15)">
+        LIL SNUGS
+      </h1>
+      <p style="font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+        color:var(--maroon2);text-align:center;letter-spacing:3px;text-transform:uppercase;
+        margin-top:8px;opacity:.75">
+        Grow-With-Me Children's Clothing
+      </p>
+    </div>
+
+    <!-- tagline badge -->
+    <div class="fr fly-up" style="margin-top:24px;
+      background:rgba(90,24,41,0.07);border:1px solid rgba(90,24,41,0.15);
+      border-radius:50px;padding:12px 28px;
+      animation:float-badge 4s ease-in-out infinite">
+      <p style="font-family:'Playfair Display',serif;font-size:17px;font-style:italic;
+        font-weight:700;color:var(--maroon);text-align:center">
+        "Wiggle ready, cuddle approved"
+      </p>
+    </div>
+  </div>
+
+  <!-- vertical divider -->
+  <div style="position:absolute;left:50%;top:10%;bottom:10%;width:1px;
+    background:linear-gradient(180deg,transparent,rgba(90,24,41,.15),transparent);z-index:2"></div>
+
+  <!-- ── RIGHT: Assignment card ── -->
+  <div style="width:50%;height:100%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:44px 50px;
+    position:relative;z-index:1">
+
+    <div class="fr fly-left glass-card" style="width:100%;padding:0;overflow:hidden">
+
+      <!-- card header -->
+      <div style="background:linear-gradient(120deg,var(--maroon),#9d446e);
+        padding:20px 28px;position:relative;overflow:hidden">
+        <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;
+          border-radius:50%;background:rgba(255,255,255,.07)"></div>
+        <div style="position:absolute;right:30px;bottom:-30px;width:70px;height:70px;
+          border-radius:50%;background:rgba(255,255,255,.05)"></div>
+        <p style="font-family:Montserrat;font-size:11px;font-weight:900;
+          color:rgba(255,214,224,.7);letter-spacing:3px;text-transform:uppercase;
+          margin-bottom:4px">CE-1 Assignment</p>
+        <h2 style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+          color:#fff;letter-spacing:-0.5px">Innovation Project</h2>
+      </div>
+
+      <!-- rows -->
+      <div style="padding:0 8px">
+        <!-- section label -->
+        <div style="padding:14px 20px 6px;display:flex;align-items:center;gap:8px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9d446e" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <span style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#9d446e">Team Members</span>
+        </div>
+        <div style="margin:0 12px;border-radius:12px;overflow:hidden;border:1px solid rgba(90,24,41,.08)">
+          <div style="display:flex;background:#fff">
+            <div style="width:30%;padding:13px 16px;color:#aaa;font-size:14px;font-weight:600;background:#fafafa;border-right:1px solid #f0f0f0">Names</div>
+            <div style="padding:13px 16px;font-weight:700;font-size:14px;color:#1a0a0e">Soumi Banerjee, Harikrishna, Isha Thakur</div>
+          </div>
+          <div style="display:flex;background:#fff;border-top:1px solid #f5f0f2">
+            <div style="width:30%;padding:13px 16px;color:#aaa;font-size:14px;font-weight:600;background:#fafafa;border-right:1px solid #f0f0f0">Team</div>
+            <div style="padding:13px 16px;font-weight:700;font-size:14px;color:var(--maroon)">X-10 · Innoventures</div>
+          </div>
+        </div>
+
+        <div style="padding:14px 20px 6px;margin-top:6px;display:flex;align-items:center;gap:8px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9d446e" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <span style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#9d446e">Course</span>
+        </div>
+        <div style="margin:0 12px 8px;border-radius:12px;overflow:hidden;border:1px solid rgba(90,24,41,.08)">
+          <div style="display:flex;background:#fff">
+            <div style="width:30%;padding:13px 16px;color:#aaa;font-size:14px;font-weight:600;background:#fafafa;border-right:1px solid #f0f0f0">Program</div>
+            <div style="padding:13px 16px;font-weight:700;font-size:14px;color:#1a0a0e">PGDM · Trimester III</div>
+          </div>
+          <div style="display:flex;background:#fff;border-top:1px solid #f5f0f2">
+            <div style="width:30%;padding:13px 16px;color:#aaa;font-size:14px;font-weight:600;background:#fafafa;border-right:1px solid #f0f0f0">Section</div>
+            <div style="padding:13px 16px;font-weight:700;font-size:14px;color:#1a0a0e">B</div>
+          </div>
+          <div style="display:flex;background:#fff;border-top:1px solid #f5f0f2">
+            <div style="width:30%;padding:13px 16px;color:#aaa;font-size:14px;font-weight:600;background:#fafafa;border-right:1px solid #f0f0f0">Subject</div>
+            <div style="padding:13px 16px;font-weight:700;font-size:14px;color:var(--maroon)">Innovation</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- footer promise -->
+      <div style="background:linear-gradient(90deg,rgba(232,169,64,.1),rgba(192,57,75,.08));
+        padding:14px 28px;border-top:1px solid rgba(90,24,41,.07);
+        display:flex;align-items:center;gap:10px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <p style="font-size:13px;font-weight:600;color:var(--maroon2);font-style:italic">
+          Clothing that grows with your child — saving money, reducing waste
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 2 — MEET PRIYA  (Priya.png + pain points)
+═══════════════════════════════════════════════════════════════ -->
+<div class="slide noise-bg" id="s2" style="
+  background:linear-gradient(140deg,#fff0f4 0%,#fde8ee 55%,#f5d0de 100%);
+  padding:30px 50px;position:relative;overflow:hidden">
+
+  <!-- decorative elements -->
+  <svg style="position:absolute;inset:0;pointer-events:none;z-index:0" viewBox="0 0 1280 720" width="1280" height="720">
+    <circle cx="1200" cy="80"  r="200" fill="rgba(192,57,75,.05)"/>
+    <circle cx="60"   cy="680" r="160" fill="rgba(232,169,64,.06)"/>
+    <circle cx="640"  cy="360" r="400" fill="rgba(192,57,75,.02)"/>
+  </svg>
+
+  <!-- title -->
+  <div style="position:relative;z-index:1;text-align:center;margin-bottom:20px">
+    <span class="pill pill-rose" style="margin-bottom:10px;display:inline-flex">Persona</span>
+    <h1 style="font-family:'Playfair Display',serif;font-size:46px;font-weight:900;
+      color:var(--maroon);letter-spacing:-1.5px;line-height:1">
+      Meet Our Super-Mom, <em>Priya!</em>
+    </h1>
+  </div>
+
+  <div style="display:flex;gap:36px;align-items:stretch;height:560px;position:relative;z-index:1">
+
+    <!-- LEFT: Priya image + persona card -->
+    <div class="fr scale-in" style="width:38%;display:flex;flex-direction:column;gap:14px">
+
+      <!-- Photo frame -->
+      <div style="
+        flex:1;border-radius:24px;overflow:hidden;
+        box-shadow:0 16px 60px rgba(90,24,41,0.22),0 0 0 3px rgba(192,57,75,0.2);
+        position:relative;background:#f9dde6;min-height:0">
+        <img src="Priya.png" alt="Priya"
+          style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block"/>
+        <!-- overlay gradient at bottom -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:90px;
+          background:linear-gradient(transparent,rgba(90,24,41,0.5));border-radius:0 0 22px 22px"></div>
+        <!-- name badge on image -->
+        <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+          background:rgba(255,255,255,0.92);border-radius:50px;
+          padding:7px 20px;backdrop-filter:blur(8px);
+          box-shadow:0 4px 16px rgba(0,0,0,0.2);white-space:nowrap">
+          <!-- <span style="font-family:'Playfair Display',serif;font-size:15px;
+            font-weight:700;color:var(--maroon)">Priya · 32 yrs</span> -->
+        </div>
+      </div>
+
+      <!-- Persona pills -->
+      <div style="glass-card;background:rgba(255,245,247,0.95);border-radius:18px;
+        padding:16px 18px;border:1px solid rgba(90,24,41,.1);
+        box-shadow:0 4px 20px rgba(90,24,41,.08)">
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="background:rgba(192,57,75,.1);color:var(--rose);border-radius:50px;
+            padding:6px 14px;font-size:12px;font-weight:700;border:1px solid rgba(192,57,75,.2)">
+            👩‍💼 Marketing Manager
+          </span>
+          <span style="background:rgba(232,169,64,.1);color:#b07a00;border-radius:50px;
+            padding:6px 14px;font-size:12px;font-weight:700;border:1px solid rgba(232,169,64,.25)">
+            👶 Mother of Two
+          </span>
+          <span style="background:rgba(90,24,41,.08);color:var(--maroon);border-radius:50px;
+            padding:6px 14px;font-size:12px;font-weight:700;border:1px solid rgba(90,24,41,.15)">
+            🌿 Eco-Conscious
+          </span>
+          <span style="background:rgba(59,130,246,.08);color:#2563eb;border-radius:50px;
+            padding:6px 14px;font-size:12px;font-weight:700;border:1px solid rgba(59,130,246,.2)">
+            📱 Digitally Connected
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: pain points -->
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;
+      padding-left:20px">
+
+      <!-- pain point 1 -->
+      <div class="fr fly-left" style="
+        position:relative;overflow:hidden;border-radius:20px;
+        background:linear-gradient(135deg,#ff5400,#e83a00);
+        padding:24px 28px 24px 82px;
+        box-shadow:0 8px 30px rgba(255,84,0,0.3)">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:58px;
+          display:flex;align-items:center;justify-content:center;
+          background:rgba(0,0,0,0.15)">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        </div>
+        <!-- arrow pointer -->
+        <div style="position:absolute;left:-2px;top:50%;transform:translateY(-50%);
+          width:0;height:0;border-top:10px solid transparent;
+          border-bottom:10px solid transparent;border-right:12px solid rgba(0,0,0,0.15)"></div>
+        <div style="position:absolute;right:0;top:0;bottom:0;width:80px;
+          background:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 80 120\"><circle cx=\"60\" cy=\"30\" r=\"40\" fill=\"rgba(255,255,255,0.07)\"/></svg>');
+          background-size:cover"></div>
+        <p style="font-size:20px;font-weight:800;color:#fff;line-height:1.35;
+          text-shadow:0 1px 4px rgba(0,0,0,0.2)">
+          Constantly frustrated by children's clothing that outgrows in months!
+        </p>
+      </div>
+
+      <!-- pain point 2 -->
+      <div class="fr fly-left" style="
+        position:relative;overflow:hidden;border-radius:20px;
+        background:linear-gradient(135deg,#c0394b,#8a1a2a);
+        padding:24px 28px 24px 82px;
+        box-shadow:0 8px 30px rgba(192,57,75,0.3)">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:58px;
+          display:flex;align-items:center;justify-content:center;
+          background:rgba(0,0,0,0.15)">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M10 11v6M14 11v6"/></svg>
+        </div>
+        <div style="position:absolute;left:-2px;top:50%;transform:translateY(-50%);
+          width:0;height:0;border-top:10px solid transparent;
+          border-bottom:10px solid transparent;border-right:12px solid rgba(0,0,0,0.15)"></div>
+        <p style="font-size:20px;font-weight:800;color:#fff;line-height:1.35;
+          text-shadow:0 1px 4px rgba(0,0,0,0.2)">
+          The heavy guilt of textile waste — barely-worn clothes discarded!
+        </p>
+      </div>
+
+      <!-- pain point 3 -->
+      <div class="fr fly-left" style="
+        position:relative;overflow:hidden;border-radius:20px;
+        background:linear-gradient(135deg,#7a2438,#5a1829);
+        padding:24px 28px 24px 82px;
+        box-shadow:0 8px 30px rgba(90,24,41,0.4)">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:58px;
+          display:flex;align-items:center;justify-content:center;
+          background:rgba(0,0,0,0.15)">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M4 22V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14M2 22h20M12 6V2M8 2h8"/></svg>
+        </div>
+        <div style="position:absolute;left:-2px;top:50%;transform:translateY(-50%);
+          width:0;height:0;border-top:10px solid transparent;
+          border-bottom:10px solid transparent;border-right:12px solid rgba(0,0,0,0.15)"></div>
+        <p style="font-size:20px;font-weight:800;color:#fff;line-height:1.35;
+          text-shadow:0 1px 4px rgba(0,0,0,0.2)">
+          Zero durable, long-lasting children's clothing options in the market!
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 3 — THE SOLUTION
+═══════════════════════════════════════════════════════════════ -->
+<div class="slide noise-bg" id="s3" style="
+  background:linear-gradient(140deg,#fff0f4 0%,#fde8ee 55%,#f5d0de 100%);
+  padding:28px 50px;position:relative;overflow:hidden">
+
+  <svg style="position:absolute;inset:0;pointer-events:none;z-index:0" viewBox="0 0 1280 720" width="1280" height="720">
+    <circle cx="1200" cy="600" r="250" fill="rgba(232,169,64,.05)"/>
+    <circle cx="100"  cy="100" r="180" fill="rgba(192,57,75,.05)"/>
+  </svg>
+
+  <div style="position:relative;z-index:1;text-align:center;margin-bottom:16px">
+    <span class="pill pill-gold" style="margin-bottom:8px;display:inline-flex">Our Innovation</span>
+    <h1 style="font-family:'Playfair Display',serif;font-size:46px;font-weight:900;
+      color:var(--maroon);letter-spacing:-1.5px">The Fabulous Solution!</h1>
+    <p style="font-size:17px;color:var(--maroon2);margin-top:6px;font-weight:500;opacity:.8">
+      Stunning adjustable garments packed with patented mechanisms
+    </p>
+  </div>
+
+  <div style="position:relative;height:430px;display:flex;justify-content:center;align-items:center;z-index:1">
+    <div class="fr scale-in" id="video-container">
+      <video id="product-video" preload="metadata" playsinline>
+        <source src="Video.mp4" type="video/mp4">
+      </video>
+      <div id="play-overlay">
+        <div id="play-btn-ring">
+          <div id="play-btn-inner">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <p style="font-family:Montserrat;font-size:16px;font-weight:900;
+          color:#fff;letter-spacing:2px;text-transform:uppercase">Click to Play</p>
+        <p style="font-size:13px;font-weight:500;color:rgba(255,255,255,.6);margin-top:4px">Product Demo</p>
+      </div>
+    </div>
+
+    <!-- left feature -->
+    <div class="fr fly-right" style="position:absolute;left:0;top:30px;max-width:290px">
+      <div style="background:rgba(255,245,247,0.92);border-radius:18px;
+        padding:18px 20px;border:1px solid rgba(90,24,41,.12);
+        box-shadow:0 4px 24px rgba(90,24,41,.1)">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+          <div style="width:48px;height:48px;border-radius:50%;
+            background:linear-gradient(135deg,#3b82f6,#1d4ed8);
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            box-shadow:0 4px 14px rgba(59,130,246,0.4)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="9" cy="9" r="1.5" fill="white"/><circle cx="15" cy="9" r="1.5" fill="white"/><circle cx="9" cy="15" r="1.5" fill="white"/><circle cx="15" cy="15" r="1.5" fill="white"/></svg>
+          </div>
+          <h3 style="font-family:Montserrat;font-size:18px;font-weight:900;color:var(--maroon)">Snap Buttons</h3>
+        </div>
+        <p style="font-size:14px;color:#555;line-height:1.5">Strategic placement for adjustable strap lengths — resize in seconds.</p>
+      </div>
+      <svg style="position:absolute;bottom:-70px;right:30px" width="80" height="70" viewBox="0 0 80 70">
+        <path d="M55,0 C55,30 25,40 25,62" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-dasharray="5,3"/>
+        <polygon points="18,58 32,58 25,70" fill="#3b82f6"/>
+      </svg>
+    </div>
+
+    <!-- right feature -->
+    <div class="fr fly-left" style="position:absolute;right:0;top:30px;max-width:290px">
+      <div style="background:rgba(255,245,247,0.92);border-radius:18px;
+        padding:18px 20px;border:1px solid rgba(90,24,41,.12);
+        box-shadow:0 4px 24px rgba(90,24,41,.1)">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+          <div style="width:48px;height:48px;border-radius:50%;
+            background:linear-gradient(135deg,#22c55e,#15803d);
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            box-shadow:0 4px 14px rgba(34,197,94,0.4)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 6h16M8 6v14M16 6v14"/><circle cx="8" cy="20" r="2" fill="white"/><circle cx="16" cy="20" r="2" fill="white"/></svg>
+          </div>
+          <h3 style="font-family:Montserrat;font-size:18px;font-weight:900;color:var(--maroon)">Draw Strings</h3>
+        </div>
+        <p style="font-size:14px;color:#555;line-height:1.5">Modify waistbands and cuffs effortlessly as the child grows.</p>
+      </div>
+      <svg style="position:absolute;bottom:-70px;left:30px" width="80" height="70" viewBox="0 0 80 70">
+        <path d="M25,0 C25,30 55,40 55,62" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-dasharray="5,3"/>
+        <polygon points="48,58 62,58 55,70" fill="#22c55e"/>
+      </svg>
+    </div>
+
+    <!-- bottom feature -->
+    <div class="fr fly-up" style="position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);white-space:nowrap">
+      <div style="background:rgba(255,245,247,0.92);border-radius:18px;
+        padding:16px 22px;border:1px solid rgba(90,24,41,.12);
+        box-shadow:0 4px 24px rgba(90,24,41,.1);
+        display:flex;align-items:center;gap:16px">
+        <div style="width:48px;height:48px;border-radius:50%;
+          background:linear-gradient(135deg,var(--gold),#b07a00);
+          display:flex;align-items:center;justify-content:center;flex-shrink:0;
+          box-shadow:0 4px 14px rgba(232,169,64,0.4)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 4v16c4 0 4-16 8-16v16c4 0 4-16 8-16v16"/><path d="M4 8h16M4 12h16M4 16h16"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family:Montserrat;font-size:18px;font-weight:900;color:var(--maroon)">Corset-Style Ties</h3>
+          <p style="font-size:14px;color:#555">Expanding side-panels for growing torsos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fr fly-up" style="
+    position:relative;z-index:1;
+    background:linear-gradient(90deg,rgba(90,24,41,0.06),rgba(232,169,64,0.1),rgba(90,24,41,0.06));
+    border-radius:50px;padding:16px 48px;text-align:center;margin-top:52px;
+    border:1px solid rgba(90,24,41,0.12);
+    box-shadow:0 4px 24px rgba(90,24,41,0.08)">
+    <p style="font-size:19px;font-weight:600;color:var(--ink);line-height:1.5">
+      Extends clothing life from 5–6 months to a
+      <strong style="color:var(--rose);font-size:22px"> WHOPPING 2–3 YEARS!</strong>
+      &nbsp;—&nbsp; massive savings, zero guilt.
+    </p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 4 — CUSTOMER JOURNEY MAP  (enhanced)
+═══════════════════════════════════════════════════════════════ -->
+<div class="slide noise-bg" id="s4" style="
+  background:linear-gradient(140deg,#fff0f4 0%,#fde8ee 55%,#f5d0de 100%);
+  padding:28px 40px 24px;position:relative;overflow:hidden">
+
+  <!-- decorative SVG blobs -->
+  <svg style="position:absolute;inset:0;pointer-events:none;z-index:0" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+      <radialGradient id="s4b1" cx="50%" cy="50%"><stop offset="0%" stop-color="#c0394b" stop-opacity=".07"/><stop offset="100%" stop-color="#c0394b" stop-opacity="0"/></radialGradient>
+      <radialGradient id="s4b2" cx="50%" cy="50%"><stop offset="0%" stop-color="#e8a940" stop-opacity=".06"/><stop offset="100%" stop-color="#e8a940" stop-opacity="0"/></radialGradient>
+    </defs>
+    <circle cx="100"  cy="100" r="220" fill="url(#s4b1)"/>
+    <circle cx="1180" cy="620" r="260" fill="url(#s4b2)"/>
+    <circle cx="640"  cy="360" r="400" fill="rgba(192,57,75,.015)"/>
+  </svg>
+
+  <!-- ── HEADER ── -->
+  <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:5px;height:48px;border-radius:3px;
+        background:linear-gradient(180deg,var(--rose),var(--gold))"></div>
+      <div>
+        <span class="pill pill-rose" style="display:inline-flex;margin-bottom:4px">Customer Journey</span>
+        <h1 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:900;
+          color:var(--maroon);letter-spacing:-1px;line-height:1">
+          Priya's Path to Brand Love
+        </h1>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <p style="font-size:13px;color:var(--muted);font-weight:500;line-height:1.5">
+        From discovery to lifelong<br>advocacy — 5 key stages
+      </p>
+    </div>
+  </div>
+
+  <!-- rainbow progress bar with labels -->
+  <div style="position:relative;z-index:1;margin-bottom:22px">
+    <div style="height:5px;border-radius:5px;
+      background:linear-gradient(90deg,#c0394b 0%,#e8793a 25%,#e8a940 50%,#4ade80 75%,#7c3aed 100%);
+      box-shadow:0 3px 12px rgba(192,57,75,0.25)"></div>
+    <!-- stage tick markers -->
+    <div style="display:flex;justify-content:space-between;margin-top:6px;padding:0 2px">
+      <span style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#c0394b;opacity:.7">Awareness</span>
+      <span style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#e8793a;opacity:.7">Consideration</span>
+      <span style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#b07a00;opacity:.7">Purchase</span>
+      <span style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#16a34a;opacity:.7">Retention</span>
+      <span style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#7c3aed;opacity:.7">Advocacy</span>
+    </div>
+  </div>
+
+  <!-- ── JOURNEY CARDS ROW ── -->
+  <div style="display:flex;gap:10px;align-items:stretch;height:476px;position:relative;z-index:1">
+
+    <!-- stage config: [accent, icon-bg, label-color, emotion-bg, num-opacity-color] -->
+
+    <!-- ── CARD 1: AWARENESS ── -->
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <div style="flex:1;background:rgba(255,255,255,0.93);
+        border:1px solid rgba(192,57,75,0.22);border-radius:22px;
+        overflow:hidden;display:flex;flex-direction:column;position:relative;
+        box-shadow:0 8px 32px rgba(192,57,75,0.12),0 1px 0 rgba(255,255,255,0.9) inset;
+        transition:transform .25s,box-shadow .25s"
+        onmouseenter="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(192,57,75,0.2)'"
+        onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(192,57,75,0.12)'">
+        <!-- gradient top bar -->
+        <div style="height:6px;background:linear-gradient(90deg,#c0394b,#e8728a,#c0394b);flex-shrink:0;
+          background-size:200%;animation:shimmer 3s infinite linear"></div>
+        <!-- watermark number -->
+        <div style="position:absolute;bottom:-10px;right:8px;
+          font-family:Montserrat;font-size:90px;font-weight:900;
+          color:rgba(192,57,75,0.055);line-height:1;pointer-events:none;user-select:none">1</div>
+        <!-- corner glow -->
+        <div style="position:absolute;top:0;right:0;width:120px;height:120px;
+          background:radial-gradient(circle at top right,rgba(192,57,75,0.08),transparent);pointer-events:none"></div>
+        <!-- icon + number row -->
+        <div style="padding:16px 16px 0;display:flex;justify-content:space-between;align-items:center">
+          <div style="background:linear-gradient(135deg,rgba(192,57,75,0.1),rgba(192,57,75,0.05));
+            border-radius:10px;padding:5px 10px;border:1px solid rgba(192,57,75,0.2)">
+            <span style="font-family:Montserrat;font-size:11px;font-weight:900;
+              color:var(--rose);letter-spacing:1px">STAGE 01</span>
+          </div>
+          <div style="width:44px;height:44px;border-radius:14px;
+            background:linear-gradient(135deg,#c0394b,#8a1a2a);
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 6px 18px rgba(192,57,75,0.42)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M2 2h20v14H2zM8 22l4-4 4 4"/></svg>
+          </div>
+        </div>
+        <div style="padding:10px 16px 16px;flex:1;display:flex;flex-direction:column">
+          <h3 style="font-family:Montserrat;font-size:17px;font-weight:900;color:var(--maroon);
+            line-height:1.1;margin-bottom:10px;letter-spacing:.3px">AWARENESS</h3>
+          <p style="font-size:12.5px;color:#5a3545;line-height:1.68;flex:1">
+            Priya discovers Lil Snugs via a captivating Instagram time-lapse — the same outfit worn beautifully across two full years of growth.
+          </p>
+          <!-- touchpoint -->
+          <div style="margin-top:10px;padding:8px 12px;background:rgba(192,57,75,0.06);
+            border-radius:10px;border-left:3px solid var(--rose)">
+            <p style="font-size:10.5px;font-weight:700;color:var(--rose);margin-bottom:2px;letter-spacing:.5px">TOUCHPOINT</p>
+            <p style="font-size:11.5px;color:#5a3040;font-weight:600">📱 Instagram Reel</p>
+          </div>
+          <div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;
+            background:rgba(192,57,75,0.09);border:1px solid rgba(192,57,75,0.22);
+            border-radius:50px;padding:6px 14px;align-self:flex-start">
+            <span style="font-size:13px">😮</span>
+            <span style="font-size:11px;font-weight:800;color:var(--rose)">Intrigued</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- connector -->
+    <div style="display:flex;align-items:center;flex-shrink:0;padding:0 2px;z-index:2">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        <div style="width:1px;height:50px;background:linear-gradient(180deg,transparent,rgba(192,57,75,.3),transparent)"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        <div style="width:1px;height:50px;background:linear-gradient(180deg,transparent,rgba(192,57,75,.3),transparent)"></div>
+      </div>
+    </div>
+
+    <!-- ── CARD 2: CONSIDERATION ── -->
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <div style="flex:1;background:rgba(255,255,255,0.93);
+        border:1px solid rgba(232,120,58,0.22);border-radius:22px;
+        overflow:hidden;display:flex;flex-direction:column;position:relative;
+        box-shadow:0 8px 32px rgba(232,120,58,0.12),0 1px 0 rgba(255,255,255,0.9) inset;
+        transition:transform .25s,box-shadow .25s"
+        onmouseenter="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(232,120,58,0.2)'"
+        onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(232,120,58,0.12)'">
+        <div style="height:6px;background:linear-gradient(90deg,#e8793a,#f5b060,#e8793a);flex-shrink:0;
+          background-size:200%;animation:shimmer 3.2s infinite linear"></div>
+        <div style="position:absolute;bottom:-10px;right:8px;
+          font-family:Montserrat;font-size:90px;font-weight:900;
+          color:rgba(232,120,58,0.055);line-height:1;pointer-events:none;user-select:none">2</div>
+        <div style="position:absolute;top:0;right:0;width:120px;height:120px;
+          background:radial-gradient(circle at top right,rgba(232,120,58,0.08),transparent);pointer-events:none"></div>
+        <div style="padding:16px 16px 0;display:flex;justify-content:space-between;align-items:center">
+          <div style="background:linear-gradient(135deg,rgba(232,120,58,0.1),rgba(232,120,58,0.05));
+            border-radius:10px;padding:5px 10px;border:1px solid rgba(232,120,58,0.22)">
+            <span style="font-family:Montserrat;font-size:11px;font-weight:900;
+              color:#c05820;letter-spacing:1px">STAGE 02</span>
+          </div>
+          <div style="width:44px;height:44px;border-radius:14px;
+            background:linear-gradient(135deg,#e8793a,#b04a00);
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 6px 18px rgba(232,120,58,0.42)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </div>
+        </div>
+        <div style="padding:10px 16px 16px;flex:1;display:flex;flex-direction:column">
+          <h3 style="font-family:Montserrat;font-size:17px;font-weight:900;color:var(--maroon);
+            line-height:1.1;margin-bottom:10px;letter-spacing:.3px">CONSIDERATION</h3>
+          <p style="font-size:12.5px;color:#5a3545;line-height:1.68;flex:1">
+            She obsessively explores the e-commerce site, examining product pages and studying the brilliant adjustment mechanisms in detail.
+          </p>
+          <div style="margin-top:10px;padding:8px 12px;background:rgba(232,120,58,0.07);
+            border-radius:10px;border-left:3px solid #e8793a">
+            <p style="font-size:10.5px;font-weight:700;color:#c05820;margin-bottom:2px;letter-spacing:.5px">TOUCHPOINT</p>
+            <p style="font-size:11.5px;color:#5a3040;font-weight:600">🌐 Product Pages</p>
+          </div>
+          <div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;
+            background:rgba(232,120,58,0.09);border:1px solid rgba(232,120,58,0.24);
+            border-radius:50px;padding:6px 14px;align-self:flex-start">
+            <span style="font-size:13px">🤔</span>
+            <span style="font-size:11px;font-weight:800;color:#c05820">Evaluating</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- connector -->
+    <div style="display:flex;align-items:center;flex-shrink:0;padding:0 2px;z-index:2">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        <div style="width:1px;height:50px;background:linear-gradient(180deg,transparent,rgba(232,169,64,.4),transparent)"></div>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        <div style="width:1px;height:50px;background:linear-gradient(180deg,transparent,rgba(232,169,64,.4),transparent)"></div>
+      </div>
+    </div>
+
+    <!-- ── CARD 3: PURCHASE ── -->
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <div style="flex:1;background:rgba(255,255,255,0.93);
+        border:1px solid rgba(232,169,64,0.28);border-radius:22px;
+        overflow:hidden;display:flex;flex-direction:column;position:relative;
+        box-shadow:0 8px 32px rgba(232,169,64,0.14),0 1px 0 rgba(255,255,255,0.9) inset;
+        transition:transform .25s,box-shadow .25s"
+        onmouseenter="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(232,169,64,0.24)'"
+        onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(232,169,64,0.14)'">
+        <div style="height:6px;background:linear-gradient(90deg,#e8a940,#f5d080,#e8a940);flex-shrink:0;
+          background-size:200%;animation:shimmer 3.4s infinite linear"></div>
+        <div style="position:absolute;bottom:-10px;right:8px;
+          font-family:Montserrat;font-size:90px;font-weight:900;
+          color:rgba(232,169,64,0.07);line-height:1;pointer-events:none;user-select:none">3</div>
+        <div style="position:absolute;top:0;right:0;width:120px;height:120px;
+          background:radial-gradient(circle at top right,rgba(232,169,64,0.1),transparent);pointer-events:none"></div>
+        <div style="padding:16px 16px 0;display:flex;justify-content:space-between;align-items:center">
+          <div style="background:linear-gradient(135deg,rgba(232,169,64,0.12),rgba(232,169,64,0.06));
+            border-radius:10px;padding:5px 10px;border:1px solid rgba(232,169,64,0.3)">
+            <span style="font-family:Montserrat;font-size:11px;font-weight:900;
+              color:#9a6800;letter-spacing:1px">STAGE 03</span>
+          </div>
+          <div style="width:44px;height:44px;border-radius:14px;
+            background:linear-gradient(135deg,#e8a940,#8a5c00);
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 6px 18px rgba(232,169,64,0.44)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </div>
+        </div>
+        <div style="padding:10px 16px 16px;flex:1;display:flex;flex-direction:column">
+          <h3 style="font-family:Montserrat;font-size:17px;font-weight:900;color:var(--maroon);
+            line-height:1.1;margin-bottom:10px;letter-spacing:.3px">PURCHASE</h3>
+          <p style="font-size:12.5px;color:#5a3545;line-height:1.68;flex:1">
+            She joyfully adds overalls and leggings to her cart, applying a first-time visitor discount code at checkout.
+          </p>
+          <div style="margin-top:10px;padding:8px 12px;background:rgba(232,169,64,0.08);
+            border-radius:10px;border-left:3px solid var(--gold)">
+            <p style="font-size:10.5px;font-weight:700;color:#9a6800;margin-bottom:2px;letter-spacing:.5px">TOUCHPOINT</p>
+            <p style="font-size:11.5px;color:#5a3040;font-weight:600">🛒 Checkout + Discount</p>
+          </div>
+          <div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;
+            background:rgba(232,169,64,0.1);border:1px solid rgba(232,169,64,0.3);
+            border-radius:50px;padding:6px 14px;align-self:flex-start">
+            <span style="font-size:13px">✅</span>
+            <span style="font-size:11px;font-weight:800;color:#9a6800">Converted</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- connector -->
+    <div style="display:flex;align-items:center;flex-shrink:0;padding:0 2px;z-index:2">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        <div style="width:1px;height:50px;background:linear-gradient(180deg,transparent,rgba(90,24,41,.3),transparent)"></div>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--maroon2)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        <div style="width:1px;height:50px;background:linear-gradient(180deg,transparent,rgba(90,24,41,.3),transparent)"></div>
+      </div>
+    </div>
+
+    <!-- ── CARD 4: RETENTION ── -->
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <div style="flex:1;background:rgba(255,255,255,0.93);
+        border:1px solid rgba(122,36,56,0.24);border-radius:22px;
+        overflow:hidden;display:flex;flex-direction:column;position:relative;
+        box-shadow:0 8px 32px rgba(90,24,41,0.12),0 1px 0 rgba(255,255,255,0.9) inset;
+        transition:transform .25s,box-shadow .25s"
+        onmouseenter="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(90,24,41,0.2)'"
+        onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(90,24,41,0.12)'">
+        <div style="height:6px;background:linear-gradient(90deg,#7a2438,#c0394b,#7a2438);flex-shrink:0;
+          background-size:200%;animation:shimmer 3.6s infinite linear"></div>
+        <div style="position:absolute;bottom:-10px;right:8px;
+          font-family:Montserrat;font-size:90px;font-weight:900;
+          color:rgba(122,36,56,0.055);line-height:1;pointer-events:none;user-select:none">4</div>
+        <div style="position:absolute;top:0;right:0;width:120px;height:120px;
+          background:radial-gradient(circle at top right,rgba(122,36,56,0.08),transparent);pointer-events:none"></div>
+        <div style="padding:16px 16px 0;display:flex;justify-content:space-between;align-items:center">
+          <div style="background:linear-gradient(135deg,rgba(122,36,56,0.1),rgba(122,36,56,0.05));
+            border-radius:10px;padding:5px 10px;border:1px solid rgba(122,36,56,0.2)">
+            <span style="font-family:Montserrat;font-size:11px;font-weight:900;
+              color:var(--maroon2);letter-spacing:1px">STAGE 04</span>
+          </div>
+          <div style="width:44px;height:44px;border-radius:14px;
+            background:linear-gradient(135deg,#7a2438,#3d0d18);
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 6px 18px rgba(122,36,56,0.44)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+          </div>
+        </div>
+        <div style="padding:10px 16px 16px;flex:1;display:flex;flex-direction:column">
+          <h3 style="font-family:Montserrat;font-size:17px;font-weight:900;color:var(--maroon);
+            line-height:1.1;margin-bottom:10px;letter-spacing:.3px">RETENTION</h3>
+          <p style="font-size:12.5px;color:#5a3545;line-height:1.68;flex:1">
+            Priya performs the first size adjustment as her child grows — experiencing the magic firsthand and feeling fully vindicated.
+          </p>
+          <div style="margin-top:10px;padding:8px 12px;background:rgba(122,36,56,0.06);
+            border-radius:10px;border-left:3px solid var(--maroon2)">
+            <p style="font-size:10.5px;font-weight:700;color:var(--maroon2);margin-bottom:2px;letter-spacing:.5px">TOUCHPOINT</p>
+            <p style="font-size:11.5px;color:#5a3040;font-weight:600">✂️ First Adjustment</p>
+          </div>
+          <div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;
+            background:rgba(122,36,56,0.08);border:1px solid rgba(122,36,56,0.22);
+            border-radius:50px;padding:6px 14px;align-self:flex-start">
+            <span style="font-size:13px">😍</span>
+            <span style="font-size:11px;font-weight:800;color:var(--maroon2)">Delighted</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- connector -->
+    <div style="display:flex;align-items:center;flex-shrink:0;padding:0 2px;z-index:2">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        <div style="width:1px;height:50px;background:linear-gradient(180deg,transparent,rgba(232,169,64,.6),transparent)"></div>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--gold)" opacity=".8"><path d="M9 18l6-6-6-6"/></svg>
+        <div style="width:1px;height:50px;background:linear-gradient(180deg,transparent,rgba(232,169,64,.6),transparent)"></div>
+      </div>
+    </div>
+
+    <!-- ── CARD 5: ADVOCACY (GOLD — climax card) ── -->
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <div style="flex:1;
+        background:linear-gradient(155deg,rgba(255,248,225,0.98),rgba(255,238,190,0.96));
+        border:2px solid rgba(232,169,64,0.5);border-radius:22px;
+        overflow:hidden;display:flex;flex-direction:column;position:relative;
+        box-shadow:0 10px 40px rgba(232,169,64,0.28),0 0 0 1px rgba(255,255,255,0.6) inset;
+        transition:transform .25s,box-shadow .25s"
+        onmouseenter="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 56px rgba(232,169,64,0.38)'"
+        onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 10px 40px rgba(232,169,64,0.28)'">
+        <!-- animated shimmer top bar -->
+        <div style="height:6px;background:linear-gradient(90deg,var(--gold),#f5d080,#e8a940,#f5d080,var(--gold));flex-shrink:0;
+          background-size:300%;animation:shimmer 2.5s infinite linear"></div>
+        <!-- big watermark star -->
+        <svg viewBox="0 0 120 120" style="position:absolute;bottom:-10px;right:-10px;width:100px;height:100px;opacity:.1;pointer-events:none">
+          <path d="M60 5l13 27 30 4.4-21.7 21.1 5.1 29.8L60 73.7l-26.4 13.6 5.1-29.8L17 36.4l30-4.4z" fill="#e8a940"/>
+        </svg>
+        <!-- radial glow corner -->
+        <div style="position:absolute;top:0;right:0;width:130px;height:130px;
+          background:radial-gradient(circle at top right,rgba(232,169,64,0.22),transparent);pointer-events:none"></div>
+        <!-- FINAL badge centered at top -->
+        <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);
+          background:linear-gradient(135deg,#c47a00,#e8a940);
+          border-radius:50px;padding:4px 14px;
+          box-shadow:0 4px 14px rgba(232,169,64,0.45)">
+          <span style="font-size:10px;font-weight:900;color:#fff;letter-spacing:2px;text-transform:uppercase">★ FINAL STAGE</span>
+        </div>
+        <div style="padding:18px 16px 0;display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <div style="background:linear-gradient(135deg,rgba(232,169,64,0.18),rgba(232,169,64,0.08));
+            border-radius:10px;padding:5px 10px;border:1px solid rgba(232,169,64,0.4)">
+            <span style="font-family:Montserrat;font-size:11px;font-weight:900;
+              color:#8a5c00;letter-spacing:1px">STAGE 05</span>
+          </div>
+          <div style="width:44px;height:44px;border-radius:14px;
+            background:linear-gradient(135deg,var(--gold),#8a5c00);
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 6px 18px rgba(232,169,64,0.52)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+        </div>
+        <div style="padding:10px 16px 16px;flex:1;display:flex;flex-direction:column">
+          <h3 style="font-family:Montserrat;font-size:17px;font-weight:900;color:var(--maroon);
+            line-height:1.1;margin-bottom:10px;letter-spacing:.3px">ADVOCACY</h3>
+          <p style="font-size:12.5px;color:#5a3040;line-height:1.68;flex:1">
+            She posts a side-by-side comparison tagging our brand — becoming our most powerful, authentic ambassador.
+          </p>
+          <div style="margin-top:10px;padding:8px 12px;
+            background:linear-gradient(90deg,rgba(232,169,64,0.14),rgba(192,57,75,0.08));
+            border-radius:10px;border-left:3px solid var(--gold)">
+            <p style="font-size:10.5px;font-weight:700;color:#8a5c00;margin-bottom:2px;letter-spacing:.5px">TOUCHPOINT</p>
+            <p style="font-size:11.5px;color:#5a3040;font-weight:600">📸 Social Share + Tag</p>
+          </div>
+          <div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;
+            background:rgba(232,169,64,0.18);border:1px solid rgba(232,169,64,0.45);
+            border-radius:50px;padding:6px 14px;align-self:flex-start">
+            <span style="font-size:13px">📣</span>
+            <span style="font-size:11px;font-weight:900;color:#8a5c00">Ambassador</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end cards row -->
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 5 — HAPPILY EVER AFTER  (enhanced finale)
+═══════════════════════════════════════════════════════════════ -->
+<div class="slide noise-bg" id="s5" style="
+  background:linear-gradient(140deg,#fff0f4 0%,#fde8ee 55%,#f5d0de 100%);
+  padding:26px 46px 20px;position:relative;overflow:hidden">
+
+  <!-- decorative blobs -->
+  <svg style="position:absolute;inset:0;pointer-events:none;z-index:0" viewBox="0 0 1280 720" width="1280" height="720">
+    <defs>
+      <radialGradient id="s5b1" cx="50%" cy="50%"><stop offset="0%" stop-color="#e8a940" stop-opacity=".12"/><stop offset="100%" stop-color="#e8a940" stop-opacity="0"/></radialGradient>
+      <radialGradient id="s5b2" cx="50%" cy="50%"><stop offset="0%" stop-color="#c0394b" stop-opacity=".07"/><stop offset="100%" stop-color="#c0394b" stop-opacity="0"/></radialGradient>
+      <radialGradient id="s5b3" cx="50%" cy="50%"><stop offset="0%" stop-color="#c0394b" stop-opacity=".05"/><stop offset="100%" stop-color="#c0394b" stop-opacity="0"/></radialGradient>
+    </defs>
+    <circle cx="640" cy="360" r="420" fill="url(#s5b1)"/>
+    <circle cx="1200" cy="80"  r="260" fill="url(#s5b2)"/>
+    <circle cx="60"   cy="660" r="220" fill="url(#s5b3)"/>
+    <!-- decorative arc lines -->
+    <ellipse cx="640" cy="360" rx="380" ry="280" fill="none" stroke="rgba(232,169,64,.07)" stroke-width="1" stroke-dasharray="8 12"/>
+    <ellipse cx="640" cy="360" rx="460" ry="340" fill="none" stroke="rgba(192,57,75,.05)" stroke-width="1" stroke-dasharray="4 18"/>
+    <!-- dot grid -->
+    <g opacity="0.12">
+      <circle cx="1100" cy="40"  r="3" fill="#e8a940"/><circle cx="1122" cy="40"  r="3" fill="#e8a940"/>
+      <circle cx="1144" cy="40"  r="3" fill="#e8a940"/><circle cx="1166" cy="40"  r="3" fill="#e8a940"/>
+      <circle cx="1100" cy="62"  r="3" fill="#e8a940"/><circle cx="1122" cy="62"  r="3" fill="#e8a940"/>
+      <circle cx="1144" cy="62"  r="3" fill="#e8a940"/><circle cx="1166" cy="62"  r="3" fill="#e8a940"/>
+      <circle cx="1100" cy="84"  r="3" fill="#e8a940"/><circle cx="1122" cy="84"  r="3" fill="#e8a940"/>
+      <circle cx="1144" cy="84"  r="3" fill="#e8a940"/><circle cx="1166" cy="84"  r="3" fill="#e8a940"/>
+    </g>
+  </svg>
+
+  <!-- ── HEADER ── -->
+  <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:18px">
+    <div style="height:2px;width:60px;background:linear-gradient(90deg,transparent,var(--gold));border-radius:2px"></div>
+    <div style="text-align:center">
+      <span class="pill pill-gold" style="display:inline-flex;margin:0 auto 6px">✦ The Outcome</span>
+      <h1 style="font-family:'Playfair Display',serif;font-size:40px;font-weight:900;
+        color:var(--maroon);letter-spacing:-1.5px;line-height:1">
+        Happily Ever After — <em style="color:var(--rose)">For Everyone</em>
+      </h1>
+      <p style="font-size:13px;color:var(--muted);font-weight:500;margin-top:5px">
+        Where lasting bonds, smart savings &amp; brand love converge
+      </p>
+    </div>
+    <div style="height:2px;width:60px;background:linear-gradient(90deg,var(--gold),transparent);border-radius:2px"></div>
+  </div>
+
+  <!-- ── MAIN CONTENT: 3-column ── -->
+  <div style="position:relative;z-index:1;display:flex;gap:20px;height:548px">
+
+    <!-- ═══ LEFT: 3 outcome cards ═══ -->
+    <div style="width:36%;display:flex;flex-direction:column;gap:12px">
+
+      <!-- Card: Delayed Value -->
+      <div style="flex:1;background:rgba(255,255,255,0.95);border-radius:20px;
+        border:1px solid rgba(232,169,64,0.3);overflow:hidden;
+        box-shadow:0 8px 32px rgba(232,169,64,0.14),0 1px 0 rgba(255,255,255,0.9) inset;
+        display:flex;align-items:stretch;
+        transition:transform .25s,box-shadow .25s"
+        onmouseenter="this.style.transform='translateX(4px)';this.style.boxShadow='0 12px 40px rgba(232,169,64,0.22)'"
+        onmouseleave="this.style.transform='translateX(0)';this.style.boxShadow='0 8px 32px rgba(232,169,64,0.14)'">
+        <div style="width:7px;background:linear-gradient(180deg,var(--gold),#c47a00);flex-shrink:0"></div>
+        <div style="padding:16px 18px;flex:1">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:38px;height:38px;border-radius:11px;flex-shrink:0;
+              background:linear-gradient(135deg,var(--gold),#8a5c00);
+              display:flex;align-items:center;justify-content:center;
+              box-shadow:0 4px 14px rgba(232,169,64,0.38)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zm.5-15v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/></svg>
+            </div>
+            <div>
+              <p style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#9a6800;opacity:.8;margin-bottom:1px">Outcome 01</p>
+              <h3 style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--maroon);line-height:1">Delayed Value</h3>
+            </div>
+          </div>
+          <p style="font-size:13px;color:#5a3545;line-height:1.62">True value is realized months after purchase — a rare gift that keeps on giving, long after the first wear.</p>
+        </div>
+      </div>
+
+      <!-- Card: Lasting Bonds -->
+      <div style="flex:1;background:rgba(255,255,255,0.95);border-radius:20px;
+        border:1px solid rgba(192,57,75,0.22);overflow:hidden;
+        box-shadow:0 8px 32px rgba(192,57,75,0.1),0 1px 0 rgba(255,255,255,0.9) inset;
+        display:flex;align-items:stretch;
+        transition:transform .25s,box-shadow .25s"
+        onmouseenter="this.style.transform='translateX(4px)';this.style.boxShadow='0 12px 40px rgba(192,57,75,0.18)'"
+        onmouseleave="this.style.transform='translateX(0)';this.style.boxShadow='0 8px 32px rgba(192,57,75,0.1)'">
+        <div style="width:7px;background:linear-gradient(180deg,var(--rose),var(--maroon));flex-shrink:0"></div>
+        <div style="padding:16px 18px;flex:1">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:38px;height:38px;border-radius:11px;flex-shrink:0;
+              background:linear-gradient(135deg,var(--rose),var(--maroon));
+              display:flex;align-items:center;justify-content:center;
+              box-shadow:0 4px 14px rgba(192,57,75,0.38)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+            <div>
+              <p style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--rose);opacity:.85;margin-bottom:1px">Outcome 02</p>
+              <h3 style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--maroon);line-height:1">Lasting Bonds</h3>
+            </div>
+          </div>
+          <p style="font-size:13px;color:#5a3545;line-height:1.62">Lasting relationships with parents like Priya — rooted in genuine trust, shared values, and real savings.</p>
+        </div>
+      </div>
+
+      <!-- Card: Transformation -->
+      <div style="flex:1;background:rgba(255,255,255,0.95);border-radius:20px;
+        border:1px solid rgba(90,24,41,0.18);overflow:hidden;
+        box-shadow:0 8px 32px rgba(90,24,41,0.09),0 1px 0 rgba(255,255,255,0.9) inset;
+        display:flex;align-items:stretch;
+        transition:transform .25s,box-shadow .25s"
+        onmouseenter="this.style.transform='translateX(4px)';this.style.boxShadow='0 12px 40px rgba(90,24,41,0.16)'"
+        onmouseleave="this.style.transform='translateX(0)';this.style.boxShadow='0 8px 32px rgba(90,24,41,0.09)'">
+        <div style="width:7px;background:linear-gradient(180deg,var(--maroon),#3d0d18);flex-shrink:0"></div>
+        <div style="padding:16px 18px;flex:1">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:38px;height:38px;border-radius:11px;flex-shrink:0;
+              background:linear-gradient(135deg,var(--maroon),#3d0d18);
+              display:flex;align-items:center;justify-content:center;
+              box-shadow:0 4px 14px rgba(90,24,41,0.32)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <p style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--maroon2);opacity:.85;margin-bottom:1px">Outcome 03</p>
+              <h3 style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--maroon);line-height:1">Transformation</h3>
+            </div>
+          </div>
+          <p style="font-size:13px;color:#5a3545;line-height:1.62">Customers become brand ambassadors — a powerful, organic flywheel of authentic pride and trusted growth.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CENTER: Star medallion + quote ═══ -->
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;position:relative">
+
+      <!-- spinning star burst -->
+      <div style="position:relative;width:240px;height:240px;flex-shrink:0">
+        <svg viewBox="0 0 200 200" style="width:240px;height:240px;animation:spin 28s linear infinite;position:absolute;inset:0;opacity:.5">
+          <defs>
+            <linearGradient id="s5gld" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fef08a"/><stop offset="50%" stop-color="#e8a940"/><stop offset="100%" stop-color="#a16207"/>
+            </linearGradient>
+          </defs>
+          <polygon points="100,4 112,88 196,100 112,112 100,196 88,112 4,100 88,88" fill="none" stroke="url(#s5gld)" stroke-width="1.5" opacity=".7"/>
+          <polygon points="100,18 109,85 182,100 109,115 100,182 91,115 18,100 91,85" fill="none" stroke="url(#s5gld)" stroke-width="1" opacity=".4"/>
+        </svg>
+        <!-- counter-spin ring -->
+        <svg viewBox="0 0 200 200" style="width:240px;height:240px;animation:spin 40s linear infinite reverse;position:absolute;inset:0;opacity:.3">
+          <circle cx="100" cy="100" r="92" fill="none" stroke="url(#s5gld)" stroke-width=".8" stroke-dasharray="6 14"/>
+        </svg>
+        <!-- center medallion -->
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+          <div style="width:156px;height:156px;border-radius:50%;
+            background:linear-gradient(135deg,rgba(255,248,225,0.99),rgba(255,238,190,0.95));
+            border:2.5px solid rgba(232,169,64,0.5);
+            box-shadow:0 0 50px rgba(232,169,64,0.22),0 10px 40px rgba(90,24,41,0.12),0 0 0 6px rgba(232,169,64,0.08);
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="var(--gold)" style="filter:drop-shadow(0 2px 10px rgba(232,169,64,0.55))"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <p style="font-family:'Playfair Display',serif;font-size:12px;font-weight:800;
+              color:var(--maroon);text-align:center;line-height:1.3">Happy<br>Customer</p>
+            <div style="display:flex;gap:2px;margin-top:2px">
+              <span style="color:var(--gold);font-size:9px">★★★★★</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Priya testimonial -->
+      <div style="background:rgba(255,255,255,0.94);border-radius:20px;padding:16px 20px;
+        border:1px solid rgba(90,24,41,0.12);border-left:4px solid var(--rose);
+        box-shadow:0 8px 28px rgba(90,24,41,0.1);
+        max-width:310px;text-align:left">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--gold)" style="flex-shrink:0;margin-top:2px;opacity:.9"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+          <div>
+            <p style="font-family:'Playfair Display',serif;font-size:13.5px;font-style:italic;font-weight:700;color:var(--maroon);line-height:1.5">
+              "My son's been in the same Lil Snugs overalls for 18 months — and they still fit perfectly. Worth every rupee!"
+            </p>
+            <p style="font-size:11px;font-weight:700;color:var(--rose);margin-top:7px;letter-spacing:.4px">— Priya · Verified Buyer &nbsp;⭐⭐⭐⭐⭐</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ RIGHT: Stats + CTA ═══ -->
+    <div style="width:30%;display:flex;flex-direction:column;gap:12px">
+
+      <!-- stat 1 -->
+      <div style="background:rgba(255,255,255,0.95);border-radius:20px;padding:18px 20px;
+        border:1px solid rgba(192,57,75,0.22);
+        box-shadow:0 8px 32px rgba(192,57,75,0.12);
+        transition:transform .25s" 
+        onmouseenter="this.style.transform='translateX(-4px)'"
+        onmouseleave="this.style.transform='translateX(0)'">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <p style="font-family:Montserrat;font-size:46px;font-weight:900;
+              color:var(--rose);line-height:1;letter-spacing:-3px">2–3</p>
+            <p style="font-family:Montserrat;font-size:14px;font-weight:900;color:var(--maroon);margin-top:1px">Years Lifespan</p>
+          </div>
+          <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--rose),var(--maroon));
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            box-shadow:0 4px 14px rgba(192,57,75,0.35)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          </div>
+        </div>
+        <p style="font-size:11.5px;color:var(--muted);font-weight:500">vs. 5–6 months industry average</p>
+        <div style="margin-top:10px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--rose),var(--rose-lt),rgba(192,57,75,0.1));overflow:hidden">
+          <div style="height:100%;width:80%;background:linear-gradient(90deg,var(--rose),var(--rose-lt));border-radius:4px"></div>
+        </div>
+      </div>
+
+      <!-- stat 2 -->
+      <div style="background:rgba(255,255,255,0.95);border-radius:20px;padding:18px 20px;
+        border:1px solid rgba(232,169,64,0.3);
+        box-shadow:0 8px 32px rgba(232,169,64,0.14);
+        transition:transform .25s"
+        onmouseenter="this.style.transform='translateX(-4px)'"
+        onmouseleave="this.style.transform='translateX(0)'">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <p style="font-family:Montserrat;font-size:46px;font-weight:900;
+              color:var(--gold);line-height:1;letter-spacing:-3px">5×</p>
+            <p style="font-family:Montserrat;font-size:14px;font-weight:900;color:var(--maroon);margin-top:1px">Longer Lasting</p>
+          </div>
+          <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#8a5c00);
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            box-shadow:0 4px 14px rgba(232,169,64,0.4)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+        </div>
+        <p style="font-size:11.5px;color:var(--muted);font-weight:500">Proven grow-with-me technology</p>
+        <div style="margin-top:10px;height:4px;border-radius:4px;background:rgba(232,169,64,0.1);overflow:hidden">
+          <div style="height:100%;width:95%;background:linear-gradient(90deg,var(--gold),var(--gold-lt));border-radius:4px"></div>
+        </div>
+      </div>
+
+      <!-- stat 3 -->
+      <div style="background:linear-gradient(145deg,rgba(255,248,225,0.98),rgba(255,238,190,0.94));border-radius:20px;padding:18px 20px;
+        border:2px solid rgba(232,169,64,0.38);
+        box-shadow:0 10px 36px rgba(232,169,64,0.2);
+        transition:transform .25s"
+        onmouseenter="this.style.transform='translateX(-4px)'"
+        onmouseleave="this.style.transform='translateX(0)'">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <p style="font-family:Montserrat;font-size:40px;font-weight:900;line-height:1">♾️</p>
+            <p style="font-family:Montserrat;font-size:14px;font-weight:900;color:var(--maroon);margin-top:2px">Brand Love</p>
+          </div>
+          <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--rose),var(--maroon));
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            box-shadow:0 4px 14px rgba(192,57,75,0.35)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+        </div>
+        <p style="font-size:11.5px;color:#7a5020;font-weight:500">Customers become ambassadors</p>
+        <div style="margin-top:10px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--rose));"></div>
+      </div>
+
+      <!-- CTA / brand promise strip -->
+      <div style="background:linear-gradient(135deg,var(--maroon),#9d446e);
+        border-radius:18px;padding:16px 18px;
+        box-shadow:0 10px 32px rgba(90,24,41,0.3)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold-lt)">Lil Snugs Promise</span>
+        </div>
+        <p style="font-family:'Playfair Display',serif;font-size:14px;font-style:italic;
+          font-weight:700;color:rgba(255,240,244,0.96);line-height:1.5">
+          "Clothing that grows with your child — saving money, reducing waste"
+        </p>
+        <div style="margin-top:10px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent)"></div>
+        <p style="font-size:10px;font-weight:700;color:rgba(255,214,224,.6);margin-top:8px;text-align:center;letter-spacing:1.5px;text-transform:uppercase">Est. 2024 · X-10 Innoventures</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+</div><!-- #wrap -->
+
+<script>
+/* ── RESIZE ── */
+const wrap=document.getElementById('wrap');
+function resize(){
+  const s=Math.min(window.innerWidth/1280,window.innerHeight/720);
+  wrap.style.transform=`scale(${s})`;
+  wrap.style.marginLeft=`${(window.innerWidth-1280*s)/2}px`;
+  wrap.style.marginTop=`${(window.innerHeight-720*s)/2}px`;
+}
+window.addEventListener('resize',resize);resize();
+
+/* ── NAVIGATION ── */
+let cur=0;
+const slides=document.querySelectorAll('.slide');
+const counter=document.getElementById('slide-counter');
+const progress=document.getElementById('progress');
+
+function pad(n){return n<10?'0'+n:n}
+function updateUI(){
+  counter.textContent=`${pad(cur+1)} / ${pad(slides.length)}`;
+  progress.style.width=`${((cur+1)/slides.length)*100}%`;
+}
+function showSlide(i){
+  slides.forEach((s,j)=>{
+    if(j===i){s.style.display='block';setTimeout(()=>s.classList.add('active'),10);}
+    else{s.classList.remove('active');setTimeout(()=>{if(j!==i)s.style.display='none';},10);}
+    if(j>i)s.querySelectorAll('.fr').forEach(f=>f.classList.remove('show'));
+  });
+  const vid=document.getElementById('product-video');
+  if(i!==2&&vid){vid.pause();showPlayOverlay(true);}
+  updateUI();
+}
+function next(){
+  const hidden=slides[cur].querySelectorAll('.fr:not(.show)');
+  if(hidden.length)hidden[0].classList.add('show');
+  else if(cur<slides.length-1){cur++;showSlide(cur);}
+  document.getElementById('hint').style.opacity='0';
+}
+function prev(){
+  const visible=slides[cur].querySelectorAll('.fr.show');
+  if(visible.length)visible[visible.length-1].classList.remove('show');
+  else if(cur>0){cur--;showSlide(cur);slides[cur].querySelectorAll('.fr').forEach(f=>f.classList.add('show'));}
+}
+window.addEventListener('keydown',e=>{
+  if(['ArrowRight',' ','Enter','PageDown'].includes(e.key)){e.preventDefault();next();}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+});
+document.body.addEventListener('click',e=>{
+  if(e.target.closest('#video-container'))return;
+  next();
+});
+slides.forEach((s,i)=>{if(i>0)s.style.display='none';});
+updateUI();
+
+/* ── VIDEO ── */
+const vidContainer=document.getElementById('video-container');
+const vid=document.getElementById('product-video');
+const overlay=document.getElementById('play-overlay');
+function showPlayOverlay(v){v?overlay.classList.remove('hidden'):overlay.classList.add('hidden');}
+vidContainer.addEventListener('click',()=>{
+  if(vid.paused){vid.play();showPlayOverlay(false);}
+  else{vid.pause();showPlayOverlay(true);}
+});
+vid.addEventListener('ended',()=>{showPlayOverlay(true);vid.currentTime=0;});
+</script>
+</body>
+</html>
